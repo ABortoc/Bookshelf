@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Bookshelf</string>
+    <string name="button1">Read</string>
+    <string name="button2">To Read</string>
+    <string name="title_activity_read">Read</string>
+    <string name="title_activity_to_read">ToRead</string>
+    <string name="sign_in">Sign In</string>
+</resources>

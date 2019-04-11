@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "1055807613885",
+    "firebase_url": "https://bookshelf-2d26f.firebaseio.com",
+    "project_id": "bookshelf-2d26f",
+    "storage_bucket": "bookshelf-2d26f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1055807613885:android:860b7a4527a4d034",
+        "android_client_info": {
+          "package_name": "com.androidclass.bookshelf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1055807613885-4umqe75jrdoqsrio71t6l6halruu45of.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.androidclass.bookshelf",
+            "certificate_hash": "54bd5b4c0748a8a4f4f1079f8b2c6f4a29830bea"
+          }
+        },
+        {
+          "client_id": "1055807613885-agpedcgvdhellej9i1rkimte2re9rlc9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.androidclass.bookshelf",
+            "certificate_hash": "fccbe285fcef1fb82accb4d69b25b687d4db5bf5"
+          }
+        },
+        {
+          "client_id": "1055807613885-m5vv88cf2jjkpu0ufi3sppjfh4fevhkl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBevSvHra4vhjvyRCZoWzWZpCUHCWyLrJc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1055807613885-m5vv88cf2jjkpu0ufi3sppjfh4fevhkl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

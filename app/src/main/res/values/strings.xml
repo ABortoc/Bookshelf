@@ -5,4 +5,7 @@
     <string name="title_activity_read">Read</string>
     <string name="title_activity_to_read">ToRead</string>
     <string name="sign_in">Sign In</string>
+    <string name="button_add">Add a book</string>
+    <string name="button_remove">Remove a book</string>
+    <string name="button_logout">Logout</string>
 </resources>

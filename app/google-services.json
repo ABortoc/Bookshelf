@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "1055807613885-mf3mv1mvc95i0jf4u7gtv9mdismml27k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.androidclass.bookshelf",
+            "certificate_hash": "548c3f102d6a864ab5b8f38efbbfe8bca30c3e6d"
+          }
+        },
+        {
           "client_id": "1055807613885-m5vv88cf2jjkpu0ufi3sppjfh4fevhkl.apps.googleusercontent.com",
           "client_type": 3
         }

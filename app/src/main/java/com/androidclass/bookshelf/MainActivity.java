@@ -85,6 +85,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 startActivity(intent);
             }
         });
+
+        Button logOutButton = (Button) findViewById(R.id.logout);
+        logOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(MainActivity.this, "To Read", Toast.LENGTH_SHORT).show();
+                logOut();
+            }
+        });
     }
 
     @Override
@@ -111,5 +120,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         User user = new User(name);
 
         mDatabase.child("users").child(userId).setValue(user);
+    }
+
+    public void logOut() {
+        mFirebaseAuth.signOut();
+        finish();
+        Intent intent = new Intent(MainActivity.this, SignIn.class);
+        startActivity(intent);
+
+
     }
 }

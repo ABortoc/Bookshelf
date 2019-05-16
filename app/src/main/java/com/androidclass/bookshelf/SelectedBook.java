@@ -4,7 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SelectedBook extends AppCompatActivity {
@@ -36,6 +42,7 @@ public class SelectedBook extends AppCompatActivity {
     private FirebaseUser mFirebaseUser;
     private FirebaseAuth mFirebaseAuth;
     private Button mRemove;
+    private Button mCalendar;
     private EditText mDescription_edit;
     private TextView mDescription;
     private String mTable;
@@ -49,6 +56,20 @@ public class SelectedBook extends AppCompatActivity {
         setBookInfo(mAuthor, mTitle, mDate);
 
         ImageView imageView = (ImageView) findViewById(R.id.imageView_cover_selected);
+        mCalendar = (Button) findViewById(R.id.button_calendar);
+        if(mTable.equals("read")) {
+            mCalendar.setVisibility(View.INVISIBLE);
+        }
+        else if(mTable.equals("toread")) {
+            mCalendar.setVisibility(View.VISIBLE);
+        }
+        mCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openApp(SelectedBook.this, "com.google.android.calendar");
+            }
+        });
+
         Glide.with(this).load(mCoverURL).placeholder(R.drawable.ic_book_placeholder)
                 .into(imageView);
         mDescription_edit = (EditText) findViewById(R.id.description_view_edit);
@@ -143,5 +164,21 @@ public class SelectedBook extends AppCompatActivity {
         Map<String, Object> updates = new HashMap<>();
         updates.put("mDescription", description);
         reference.updateChildren(updates);
+    }
+
+    public static boolean openApp(Context context, String packageName) {
+        PackageManager manager = context.getPackageManager();
+        try {
+            Intent i = manager.getLaunchIntentForPackage(packageName);
+            if (i == null) {
+                return false;
+                //throw new ActivityNotFoundException();
+            }
+            i.addCategory(Intent.CATEGORY_LAUNCHER);
+            context.startActivity(i);
+            return true;
+        } catch (ActivityNotFoundException e) {
+            return false;
+        }
     }
 }

@@ -1,8 +1,15 @@
 package com.androidclass.bookshelf;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,10 +28,11 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
-    private Button mRead, mToRead;
+    private Button mRead, mToRead, mLogOutButton;
 
     private static final String TAG = "MainActivity";
     public static final String ANONYMOUS = "anonymous";
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
 
     private String mUsername;
     private String mPhotoUrl;
@@ -67,38 +75,70 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
 
         mRead = (Button) findViewById(R.id.read);
-        mRead.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Toast.makeText(MainActivity.this, "Read", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, Read.class);
-                startActivity(intent);
-            }
-        });
-
         mToRead = (Button) findViewById(R.id.toread);
-        mToRead.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Toast.makeText(MainActivity.this, "To Read", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, ToRead.class);
-                startActivity(intent);
-            }
-        });
+        mLogOutButton = (Button) findViewById(R.id.logout);
 
-        Button logOutButton = (Button) findViewById(R.id.logout);
-        logOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Toast.makeText(MainActivity.this, "To Read", Toast.LENGTH_SHORT).show();
-                logOut();
+        String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) !=
+                PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, permissions, LOCATION_PERMISSION_REQUEST_CODE);
+        }
+        else {
+            initialize();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @androidx.annotation.NonNull String[] permissions,
+                                           @androidx.annotation.NonNull int[] grantResults) {
+        Log.d(TAG, "onRequestPermissionsResult: called");
+
+        switch(requestCode) {
+            case LOCATION_PERMISSION_REQUEST_CODE: {
+                if(grantResults.length > 0) {
+                    for(int i = 0; i < grantResults.length; i++) {
+                        if(grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                            Log.d(TAG, "onRequestPermissionsResult: permission failed");
+                            return;
+                        }
+                    }
+                    Log.d(TAG, "onRequestPermissionsResult: permission granted");
+                    //run init function
+                    initialize();
+                    }
+                }
             }
-        });
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
+    }
+
+    public void initialize() {
+        mRead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, Read.class);
+                startActivity(intent);
+            }
+        });
+
+        mToRead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ToRead.class);
+                startActivity(intent);
+            }
+        });
+
+        mLogOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logOut();
+            }
+        });
     }
 
     @IgnoreExtraProperties

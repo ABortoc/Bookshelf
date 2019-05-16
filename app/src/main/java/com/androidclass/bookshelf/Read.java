@@ -2,14 +2,12 @@ package com.androidclass.bookshelf;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -31,6 +29,7 @@ public class Read extends AppCompatActivity {
     private FirebaseUser mFirebaseUser;
     private FirebaseAuth mFirebaseAuth;
     private ArrayList<Book> mBooksList = new ArrayList<>();
+    private FloatingActionButton mAdd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +39,6 @@ public class Read extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        addNewBook(mFirebaseUser.getUid(),"Joe Abercrombie", "The Blade Itself", "May, 2006");
-        addNewBook(mFirebaseUser.getUid(),"Joe Abercrombie", "Before They Are Hanged", "March, 2007");
-        addNewBook(mFirebaseUser.getUid(),"Joe Abercrombie", "Last Argument of Kings", "March, 2008");
 
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference("read/"+mFirebaseUser.getUid()+"/");
         mFirebaseDatabaseReference.addValueEventListener(new ValueEventListener() {
@@ -53,8 +49,11 @@ public class Read extends AppCompatActivity {
                     Log.d("Read", "Books: " + book.getmTitle());
                     Log.d("Read", "Books: " + book.getmAuthor());
                     Log.d("Read", "Books: " + book.getmDate());
+                    Log.d("Read", "Books URL: " + book.getmCoverUrl());
+                    //mBooksList.add(new Book(book.getmAuthor(), book.getmTitle(), book.getmDate(),
+                            //ContextCompat.getDrawable(Read.this, R.drawable.ic_book_placeholder)));
                     mBooksList.add(new Book(book.getmAuthor(), book.getmTitle(), book.getmDate(),
-                            ContextCompat.getDrawable(Read.this, R.drawable.ic_book_placeholder)));
+                            book.getmCoverUrl(), true));
                     createView();
                 }
                 Log.d("Read books' list", "books' list:" + mBooksList);
@@ -76,47 +75,34 @@ public class Read extends AppCompatActivity {
                 intent.putExtra("Author", mBookAdapter.getCurrentBook(position).getmAuthor());
                 intent.putExtra("Title", mBookAdapter.getCurrentBook(position).getmTitle());
                 intent.putExtra("Date", mBookAdapter.getCurrentBook(position).getmDate());
+                intent.putExtra("CoverURL", mBookAdapter.getCurrentBook(position).getmCoverUrl());
+                intent.putExtra("Table", "read");
                 startActivity(intent);
             }
         });
 
-        /*Button addBookButton = (Button) findViewById(R.id.button_add);
-        addBookButton.setOnClickListener(new View.OnClickListener() {
+        mAdd = (FloatingActionButton) findViewById(R.id.floatingActionButton_add);
+        mAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent (Read.this, AddBook.class);
+                mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+                Intent intent = new Intent(Read.this, AddBook.class);
+                intent.putExtra("Table","read");
                 startActivity(intent);
+                finish();
             }
         });
 
-        Button removeBookButton = (Button) findViewById(R.id.button_remove);
-        removeBookButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent (Read.this, RemoveBook.class);
-                startActivity(intent);
-            }
-        });*/
-
-        /*FloatingActionButton addBook = findViewById(R.id.button_add);
-        addBook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent (Read.this, AddBook.class);
-                startActivity(intent);
-            }
-        });*/
-
-    }
-
-    private void addNewBook (String userId, String author, String title, String date) {
-        Book book = new Book (author, title, date);
-
-        mFirebaseDatabaseReference.child("read").child(userId).child(title).setValue(book);
     }
 
     private void createView () {
         mBookAdapter = new BookAdapter(this, mBooksList);
         mListView.setAdapter(mBookAdapter);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        super.recreate();
     }
 }

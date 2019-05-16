@@ -3,18 +3,31 @@
     package="com.androidclass.bookshelf">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
 
     <application
+        android:name=".AppController"
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RemoveBook"></activity>
-        <activity android:name=".AddBook" />
+
+        <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="barcode" />
+
+        <activity
+            android:name=".AddBook"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".SignIn" />
-        <activity android:name=".SelectedBook" />
+        <activity
+            android:name=".SelectedBook"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".ToRead"
             android:label="@string/title_activity_to_read"
@@ -40,6 +53,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.androidclass.bookshelf"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

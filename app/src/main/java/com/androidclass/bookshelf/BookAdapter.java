@@ -1,6 +1,7 @@
 package com.androidclass.bookshelf;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import java.util.List;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.bumptech.glide.Glide;
 
 public class BookAdapter extends ArrayAdapter<Book> {
 
@@ -37,6 +40,8 @@ public class BookAdapter extends ArrayAdapter<Book> {
         Book currentBook = mBookList.get(position);
 
         ImageView image = (ImageView) listItem.findViewById(R.id.imageView_cover);
+        Glide.with(mContext).load(currentBook.getmCoverUrl()).placeholder(R.drawable.ic_book_placeholder)
+        .into(image);
 
         TextView author = (TextView) listItem.findViewById(R.id.textView_author_selected);
         author.setText(currentBook.getmAuthor());
@@ -46,6 +51,8 @@ public class BookAdapter extends ArrayAdapter<Book> {
 
         TextView date = (TextView) listItem.findViewById(R.id.textView_releasedate);
         date.setText(currentBook.getmDate());
+
+        Log.d("BookdAdapter", "imageurl: " + currentBook.getmCoverUrl() + " title: " + currentBook.getmTitle());
 
         return listItem;
     }

@@ -2,6 +2,11 @@ package com.androidclass.bookshelf;
 
 import android.graphics.drawable.Drawable;
 
+import com.google.firebase.database.Exclude;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class Book {
 
     private String mAuthor;
@@ -10,6 +15,8 @@ public class Book {
     private int mRank;
     private Drawable mDrawable;
     private String mDescription;
+    private String mCoverUrl;
+    //private Map<String, Boolean> books = new HashMap<>();
 
     public Book() {
     }
@@ -35,6 +42,20 @@ public class Book {
         this.mTitle = mTitle;
         this.mDate = mDate;
         this.mDrawable = mDrawable;
+    }
+
+    public Book(String mAuthor, String mTitle, String mDate, String mDescription) {
+        this.mAuthor = mAuthor;
+        this.mTitle = mTitle;
+        this.mDate = mDate;
+        this.mDescription = mDescription;
+    }
+
+    public Book(String mAuthor, String mTitle, String mDate, String mCoverUrl, boolean variant) {
+        this.mAuthor = mAuthor;
+        this.mTitle = mTitle;
+        this.mDate = mDate;
+        this.mCoverUrl = mCoverUrl;
     }
 
     public String getmAuthor() {
@@ -83,6 +104,14 @@ public class Book {
 
     public void setmDescription(String mDescription) {
         this.mDescription = mDescription;
+    }
+
+    public String getmCoverUrl() {
+        return mCoverUrl;
+    }
+
+    public void setmCoverUrl(String mCoverUrl) {
+        this.mCoverUrl = mCoverUrl;
     }
 
 }

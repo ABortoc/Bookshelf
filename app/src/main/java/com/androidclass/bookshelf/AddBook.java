@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -234,9 +235,14 @@ public class AddBook extends AppCompatActivity {
                                     }
                                 }
                             }
+                            else {
+
+                            }
                             Log.d("AddBook", "getBookInfo jsonData: " + thumbnailURL);
                         } catch (JSONException e) {
+                            Toast.makeText(AddBook.this, "No book information was found.", Toast.LENGTH_LONG).show();
                             e.printStackTrace();
+                            Log.e("AddBook:", "JSON exeception: " + e);
                         }
                     }
                 },

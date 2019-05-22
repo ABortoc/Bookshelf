@@ -1,14 +1,18 @@
 package com.androidclass.bookshelf;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -21,9 +25,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+//Code pieces taken from FireBase documentation, combined and modified to work with the project
 public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
 
@@ -34,10 +38,13 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mFirebaseAuth;
 
+    private ConstraintLayout mSignInLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+        mSignInLayout = (ConstraintLayout) findViewById(R.id.sign_in_layout);
 
         mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
         mSignInButton.setSize(SignInButton.SIZE_WIDE);
@@ -58,18 +65,19 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
 
         // Initialize FirebaseAuth
         mFirebaseAuth = FirebaseAuth.getInstance();
+
+        Glide.with(this).load(R.drawable.signin_background).into(new CustomTarget<Drawable>() {
+            @Override
+            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                mSignInLayout.setBackground(resource);
+            }
+
+            @Override
+            public void onLoadCleared(@Nullable Drawable placeholder) {
+
+            }
+        });
     }
-
-/*    private void handleFirebaseAuthResult(AuthResult authResult) {
-        if (authResult != null) {
-            // Welcome the user
-            FirebaseUser user = authResult.getUser();
-            Toast.makeText(this, "Welcome " + user.getEmail(), Toast.LENGTH_SHORT).show();
-
-            // Go back to the main activity
-            startActivity(new Intent(this, MainActivity.class));
-        }
-    }*/
 
     @Override
     public void onClick(View v) {

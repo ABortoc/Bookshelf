@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddBook">
+    tools:context=".AddBook"
+    android:padding="10dp">
 
     <EditText
         android:id="@+id/edittext_author"
@@ -51,19 +52,21 @@
 
     <Button
         android:id="@+id/button_add"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent=".333"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="25dp"
+        android:layout_marginBottom="26dp"
         android:text="@string/button_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/button_scan"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent=".333"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
         android:layout_marginBottom="26dp"
         android:text="@string/picture"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -71,10 +74,10 @@
 
     <Button
         android:id="@+id/button_scanIsbn"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent=".333"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginBottom="26dp"
         android:text="@string/scan"
         app:layout_constraintBottom_toBottomOf="parent"

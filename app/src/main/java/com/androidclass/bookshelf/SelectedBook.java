@@ -2,14 +2,10 @@ package com.androidclass.bookshelf;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,11 +22,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+//Reused by both Read and Toread activity. mTable variable controls which table is being used. It is
+//passed from the activity that launched this activity, either Read or Toread.
 public class SelectedBook extends AppCompatActivity {
 
     private String mAuthor;
@@ -76,6 +72,8 @@ public class SelectedBook extends AppCompatActivity {
         mDescription = (TextView) findViewById(R.id.description_view);
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+        //Extracts book info from the database
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference(mTable+"/"+mFirebaseUser.getUid()+"/"+mTitle+"/");
         mFirebaseDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -91,8 +89,8 @@ public class SelectedBook extends AppCompatActivity {
             }
         });
 
-
-
+        //editButton changes text every time it is clicked. Makes either EditText or TextView visible,
+        //and calls updateBookInfo() when user clicks editButton ("Submit" inside the app).
         final Button editButton = (Button) findViewById(R.id.button_edit_submit);
         editButton.setTag(1);
         editButton.setText(getString(R.string.button_edit));
@@ -146,6 +144,8 @@ public class SelectedBook extends AppCompatActivity {
         }
     }
 
+    //Called from onCreate to set author, title and date variables to the values passed from the
+    //activity that launched this activity, either Read or Toread.
     protected void setBookInfo (String mAuthor, String mTitle, String mDate) {
         TextView author = (TextView) findViewById(R.id.textView_author_selected);
         author.setText (mAuthor);
@@ -157,6 +157,8 @@ public class SelectedBook extends AppCompatActivity {
         date.setText (mDate);
     }
 
+    //Called when user clicks editButton ("Submit" inside the app). Updates database entry with the
+    //description text that the user provides in the EditText.
     protected void updateBookInfo() {
         String description = mDescription.getText().toString();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child(mTable)
@@ -166,13 +168,15 @@ public class SelectedBook extends AppCompatActivity {
         reference.updateChildren(updates);
     }
 
+    //Called when mCalendar button ("Calendar" inside the app) is pressed. Launches Google Calendar.
+    //Takes context and package name arguments (Context and String type respectively).
     public static boolean openApp(Context context, String packageName) {
         PackageManager manager = context.getPackageManager();
         try {
             Intent i = manager.getLaunchIntentForPackage(packageName);
             if (i == null) {
+                Toast.makeText(context, "Requires Google Calendar to be installed.", Toast.LENGTH_LONG).show();
                 return false;
-                //throw new ActivityNotFoundException();
             }
             i.addCategory(Intent.CATEGORY_LAUNCHER);
             context.startActivity(i);

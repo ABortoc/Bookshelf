@@ -4,7 +4,7 @@
     <string name="button2">To Read</string>
     <string name="title_activity_read">Read</string>
     <string name="title_activity_to_read">ToRead</string>
-    <string name="sign_in">Sign In</string>
+    <string name="sign_in">Bookshelf</string>
     <string name="button_add_book">Add a book</string>
     <string name="button_remove_book">Remove a book</string>
     <string name="button_logout">Logout</string>

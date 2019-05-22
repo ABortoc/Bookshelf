@@ -3,7 +3,6 @@ package com.androidclass.bookshelf;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -30,11 +28,9 @@ import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -55,9 +51,7 @@ public class AddBook extends AppCompatActivity {
     private Button mScan;
     private Button mScanIsbn;
     private String mTable;
-    private String mCurrentPhotoPath;
     private Uri mPhotoURI;
-    private String mISBN;
     private String thumbnailURL;
 
     @Override
@@ -84,16 +78,6 @@ public class AddBook extends AppCompatActivity {
             public void onClick(View v) {
                 addNewBook(mTable, mFirebaseUser.getUid(), mAuthor.getText().toString(), mTitle.getText().toString(),
                         mDate.getText().toString());
-                if(mTable.equals("read")) {
-                    Intent intent = new Intent(AddBook.this, Read.class);
-                    startActivity(intent);
-                    finish();
-                }
-                else if(mTable.equals("toread")) {
-                    Intent intent = new Intent(AddBook.this, ToRead.class);
-                    startActivity(intent);
-                    finish();
-                }
             }
         });
 
@@ -108,11 +92,13 @@ public class AddBook extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 isbnScan();
-                Log.d("AddBook", "on Scan: isbn = " + mISBN + " url = " + thumbnailURL);
             }
         });
     }
 
+    //Called from onCreate to set the mTable variable to either "read" or "toread". This is done to allow
+    //one to reuse this activity for both Read and Toread activities. Read and Toread activities put extra
+    //string that signals which table is being used in their intent when launching this activity.
     private void getTable() {
         Intent intent = getIntent();
         if(intent.hasExtra("Table")){
@@ -120,18 +106,50 @@ public class AddBook extends AppCompatActivity {
         }
     }
 
-    private void addNewBook (String table, String userId, String author, String title, String date) {
+    //Called from onCreate on button click from mAdd button to add the book to the appropriate table in the
+    //database. Uses a Book class constructor that takes only 3 arguments to create an object that can be
+    //added to the database. Launches either Read or Toread activity based on the mTable variable.
+    private void addNewBook(String table, String userId, String author, String title, String date) {
         Book book = new Book (author, title, date);
 
         mFirebaseDatabaseReference.child(table).child(userId).child(title).setValue(book);
+
+        if(mTable.equals("read")) {
+            Intent intent = new Intent(AddBook.this, Read.class);
+            startActivity(intent);
+            finish();
+        }
+        else if(mTable.equals("toread")) {
+            Intent intent = new Intent(AddBook.this, ToRead.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
-    private void addNewBookFromPhoto (String table, String userId, String author, String title,
+    //Called from getBookInfo to add the book to the appropriate table in the
+    //database. Uses a Book class constructor that takes 4 arguments to create an object that can be
+    //added to the database. This add function adds a book to database from a photo of an isbn
+    //barcode, and it also adds a url for the cover image of the book. Launches either Read or Toread
+    //activity based on the mTable variable.
+    private void addNewBookFromPhoto(String table, String userId, String author, String title,
                                       String date, String coverUrl) {
         Book book = new Book (author, title, date, coverUrl, true);
         mFirebaseDatabaseReference.child(table).child(userId).child(title).setValue(book);
+
+        if(mTable.equals("read")) {
+            Intent intent = new Intent(AddBook.this, Read.class);
+            startActivity(intent);
+            finish();
+        }
+        else if(mTable.equals("toread")) {
+            Intent intent = new Intent(AddBook.this, ToRead.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
+    //Taken from android official documentation guide "Take Photos". Launches camera and saves the
+    //photo when it is taken. Called when a user clicks mScan button ("Take a Photo" inside the app).
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -141,7 +159,7 @@ public class AddBook extends AppCompatActivity {
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                // Error occurred while creating the File
+                Log.e("AddBook", "dispatchTakePictureIntent exception: " + ex);
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
@@ -154,6 +172,8 @@ public class AddBook extends AppCompatActivity {
         }
     }
 
+    //Taken from android official documentation guide "Take Photos". Creates a file for the photo
+    //that will be taken. Called from dispatchTakePictureIntent(). Returns a File type.
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -165,12 +185,13 @@ public class AddBook extends AppCompatActivity {
                 storageDir      /* directory */
         );
 
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
 
-    private void isbnScan () {
+    //Pieces of code were taken from android official documentation guide "Scan Barcodes with ML Kit on
+    //Android", modified and put together to make this function. Called when the user clicks mIsbnScan
+    //button ("Add From Photo" inside the app). Launches getBookInfo() with ISBN string argument.
+    private void isbnScan() {
         FirebaseVisionImage firebaseVisionImage;
         try {
             firebaseVisionImage = FirebaseVisionImage.fromFilePath(this, mPhotoURI);
@@ -200,6 +221,11 @@ public class AddBook extends AppCompatActivity {
                 });
     }
 
+    //Called from isbnScan() with the ISBN string that resulted from the scan. Uses volley library to
+    //access Google Books API via an http request, using the isbn number from the argument. Iterates
+    //through the JSON objects received from the Books API to find and set author, title, release
+    //date and book cover image url. Launches addNewBookFromPhoto() with the arguments of the aforementioned
+    //fields.
     private void getBookInfo(String isbn) {
         String api_key = getString(R.string.api_key);
         String book_url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn + "&key=" + api_key;
@@ -223,20 +249,10 @@ public class AddBook extends AppCompatActivity {
                                     Log.d("AddBook:", "getBookInfo authors: " + author + " " + title + " " + date);
                                     addNewBookFromPhoto(mTable, mFirebaseUser.getUid(), author, title,
                                             date, thumbnailURL);
-                                    if(mTable == "read") {
-                                        Intent intent = new Intent(AddBook.this, Read.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                    else if(mTable == "toread") {
-                                        Intent intent = new Intent(AddBook.this, ToRead.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }
                                 }
                             }
                             else {
-
+                                Log.d("AddBook", "getBookInfo: didn't get any items");
                             }
                             Log.d("AddBook", "getBookInfo jsonData: " + thumbnailURL);
                         } catch (JSONException e) {

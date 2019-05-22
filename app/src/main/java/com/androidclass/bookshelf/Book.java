@@ -2,11 +2,9 @@ package com.androidclass.bookshelf;
 
 import android.graphics.drawable.Drawable;
 
-import com.google.firebase.database.Exclude;
-
-import java.util.HashMap;
-import java.util.Map;
-
+//A public class that creates a Book object that is used throughout the project and in the database.
+//Has multiple constructors for various situation, as well as getters and setters for all the
+//variables.
 public class Book {
 
     private String mAuthor;
@@ -16,7 +14,6 @@ public class Book {
     private Drawable mDrawable;
     private String mDescription;
     private String mCoverUrl;
-    //private Map<String, Boolean> books = new HashMap<>();
 
     public Book() {
     }

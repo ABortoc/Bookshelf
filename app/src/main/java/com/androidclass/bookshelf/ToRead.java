@@ -2,15 +2,12 @@ package com.androidclass.bookshelf;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -19,9 +16,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 
+//Activity that displays objects from the Toread table of the database in a ListView.
 public class ToRead extends AppCompatActivity {
 
     private ListView mListView;
@@ -41,6 +38,7 @@ public class ToRead extends AppCompatActivity {
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
+        //Extracts objects from the Toread table from the database
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference("toread/"+mFirebaseUser.getUid()+"/");
         mFirebaseDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -93,6 +91,7 @@ public class ToRead extends AppCompatActivity {
         });
     }
 
+    //Called from onCreate(). Sets up a ListView using BookAdapter adapter class.
     private void createView () {
         mBookAdapter = new BookAdapter(this, mBooksList);
         mListView.setAdapter(mBookAdapter);

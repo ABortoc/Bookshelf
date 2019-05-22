@@ -2,14 +2,12 @@ package com.androidclass.bookshelf;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -18,9 +16,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 
+//Activity that displays objects from the Read table of the database in a ListView.
 public class Read extends AppCompatActivity {
 
     private ListView mListView;
@@ -40,6 +38,7 @@ public class Read extends AppCompatActivity {
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
+        //Extracts objects from the Read table from the database
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference("read/"+mFirebaseUser.getUid()+"/");
         mFirebaseDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -50,8 +49,6 @@ public class Read extends AppCompatActivity {
                     Log.d("Read", "Books: " + book.getmAuthor());
                     Log.d("Read", "Books: " + book.getmDate());
                     Log.d("Read", "Books URL: " + book.getmCoverUrl());
-                    //mBooksList.add(new Book(book.getmAuthor(), book.getmTitle(), book.getmDate(),
-                            //ContextCompat.getDrawable(Read.this, R.drawable.ic_book_placeholder)));
                     mBooksList.add(new Book(book.getmAuthor(), book.getmTitle(), book.getmDate(),
                             book.getmCoverUrl(), true));
                     createView();
@@ -92,9 +89,9 @@ public class Read extends AppCompatActivity {
                 finish();
             }
         });
-
     }
 
+    //Called from onCreate(). Sets up a ListView using BookAdapter adapter class.
     private void createView () {
         mBookAdapter = new BookAdapter(this, mBooksList);
         mListView.setAdapter(mBookAdapter);

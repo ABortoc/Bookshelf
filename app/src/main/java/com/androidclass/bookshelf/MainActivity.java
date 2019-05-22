@@ -1,22 +1,22 @@
 package com.androidclass.bookshelf;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.Toast;
-
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -26,6 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+//Most of the code is just standard FireBase setup that is taken from the FireBase documentation
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private Button mRead, mToRead, mLogOutButton;
@@ -42,23 +43,28 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private GoogleApiClient mGoogleApiClient;
     private DatabaseReference mDatabase;
 
+    private ConstraintLayout mMainLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Layout variable is set to handle background image loading with Glide library
+        mMainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
         mUsername = ANONYMOUS;
 
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-        if (mFirebaseUser == null) {
+        if(mFirebaseUser == null) {
             // Not signed in, launch the Sign In activity
             startActivity(new Intent(this, SignIn.class));
             finish();
             return;
-        } else {
+        }
+        else {
             mUsername = mFirebaseUser.getDisplayName();
             if (mFirebaseUser.getPhotoUrl() != null) {
                 mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
@@ -87,8 +93,24 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         else {
             initialize();
         }
+
+        //Sets background image from a drawable source
+        Glide.with(this).load(R.drawable.main_background).into(new CustomTarget<Drawable>() {
+            @Override
+            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                mMainLayout.setBackground(resource);
+            }
+
+            @Override
+            public void onLoadCleared(@Nullable Drawable placeholder) {
+
+            }
+        });
     }
 
+    //Called from onCreate. On fresh install, when permissions have not been granted yet, this function
+    //will track whether or not the user agreed to grant them. If the user declines, buttons will not
+    //function, otherwise the app will be initialized and become functional.
     @Override
     public void onRequestPermissionsResult(int requestCode, @androidx.annotation.NonNull String[] permissions,
                                            @androidx.annotation.NonNull int[] grantResults) {
@@ -104,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         }
                     }
                     Log.d(TAG, "onRequestPermissionsResult: permission granted");
-                    //run init function
+                    //run initialize function
                     initialize();
                     }
                 }
@@ -116,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
+    //Called from onRequestPermissionsResult() or onCreate(). Activates on click listeners to make buttons work.
+    //Only called if permissions are granted to the application.
     public void initialize() {
         mRead.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,7 +191,5 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         finish();
         Intent intent = new Intent(MainActivity.this, SignIn.class);
         startActivity(intent);
-
-
     }
 }

@@ -8,16 +8,15 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.bumptech.glide.Glide;
 
+//Adapter class used by Read and Toread activities to display a custom ListView, that includes
+//images alongside text, which is the main purpose of this adapter.
 public class BookAdapter extends ArrayAdapter<Book> {
 
     private Context mContext;

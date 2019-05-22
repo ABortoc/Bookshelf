@@ -1,8 +1,9 @@
+//Taken from https://androidmastermind.blogspot.com/2016/06/android-google-maps-with-nearyby-places.html mostly mirrors
+//official documentation from https://developer.android.com/training/volley . Handles http requests
 package com.androidclass.bookshelf;
 
 import android.app.Application;
 import android.text.TextUtils;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
